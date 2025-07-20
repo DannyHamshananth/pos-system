@@ -34,3 +34,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/app/api/customers/
+/app/api/employees/
+/app/api/expenses/
+/app/api/orders/
+/app/api/payments/
