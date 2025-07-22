@@ -40,3 +40,9 @@ app/api/employees/route.ts
 app/api/expenses/route.ts
 app/api/orders/route.ts
 app/api/payments/route.ts
+
+lib/customer.ts
+lib/employee.ts
+lib/expense.ts
+lib/order.ts
+lib/payment.ts
