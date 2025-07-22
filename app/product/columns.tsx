@@ -77,24 +77,6 @@ export const columns: ColumnDef<ProductList>[] = [
         ),
     },
     {
-        accessorKey: "inStock",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="in stock" />
-        ),
-    },
-    {
-        accessorKey: "onOrder",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="on order" />
-        ),
-    },
-    {
-        accessorKey: "reorderLevel",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="reorder level" />
-        ),
-    },
-    {
         accessorKey: "productCategory.name",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="category" />
