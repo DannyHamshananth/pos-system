@@ -46,3 +46,5 @@ lib/employee.ts
 lib/expense.ts
 lib/order.ts
 lib/payment.ts
+
+app/statistic/
