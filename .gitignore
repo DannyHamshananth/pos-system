@@ -35,8 +35,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-/app/api/customers/
-/app/api/employees/
-/app/api/expenses/
-/app/api/orders/
-/app/api/payments/
+app/api/customers/route.ts
+app/api/employees/route.ts
+app/api/expenses/route.ts
+app/api/orders/route.ts
+app/api/payments/route.ts
