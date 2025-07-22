@@ -48,3 +48,5 @@ lib/order.ts
 lib/payment.ts
 
 app/statistic/
+
+app/transaction/
