@@ -60,7 +60,7 @@ export function DataTable<TData, TValue>({
     })
 
     return (
-        <div>
+        <div className="w-screen sm:w-auto">
             <div className="flex relative gap-5">
                 <Search className="absolute left-3 h-full flex items-center pointer-events-none transition-colors duration-300 ease-linear ml-2 w-4" />
                 <Input type="text" className="max-full rounded-full bg-zinc-200 text-sm font-medium py-3 pl-12 text-zinc-900 placeholder-zinc-400 focus:bg-zinc-300 focus:outline-none transition-colors duration-300 ease-linear" placeholder="Search"
@@ -73,7 +73,7 @@ export function DataTable<TData, TValue>({
             </div>
             <div className="rounded-md border mt-10">
                 <Table>
-                    <TableHeader>
+                    <TableHeader className="h-16 lg:12">
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}>
                         {headerGroup.headers.map((header) => {
