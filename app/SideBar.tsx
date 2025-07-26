@@ -3,7 +3,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
 
-import { Coins, Home, LineChart, Package, Receipt, Settings } from "lucide-react";
+import { Coins, Home, LineChart, Package, Receipt, Settings, ShoppingCart } from "lucide-react";
 
 const icons = {
     // home
@@ -49,7 +49,7 @@ function SideBar() {
             </svg>
         </button>
 
-        <aside id="sidebar" className="fixed top-0 left-0 w-16 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="sidebar">
+        <aside id="sidebar" className="fixed top-0 left-0 w-16 h-screen transition-transform sm:translate-x-0" aria-label="sidebar">
             <div className="h-full px-2 bg-white text-white flex flex-col border-r-2">    
                 {/* logo here */}
                 <ul className="space-y-5 font-medium">
@@ -57,9 +57,10 @@ function SideBar() {
                 </ul>
                 <ul className="pt-2 mt-2 space-y-5 font-medium border-t-2">
                     <li><SideBarIcon icon={<Package className="w-5 h-5" />} text="Product" /></li>
-                    <li><SideBarIcon icon={<LineChart className="w-5 h-5" />} text="Statistic" /></li>
+                    <li><SideBarIcon icon={<ShoppingCart className="w-5 h-5" />} text="Sale" /></li>
+                    {/* <li><SideBarIcon icon={<LineChart className="w-5 h-5" />} text="Statistic" /></li>
                     <li><SideBarIcon icon={<Coins className="w-5 h-5" />} text="Transaction" /></li>
-                    <li><SideBarIcon icon={<Receipt className="w-5 h-5" />} text="Expense" /></li>
+                    <li><SideBarIcon icon={<Receipt className="w-5 h-5" />} text="Expense" /></li> */}
                 </ul>
                 <ul className="pt-2 mt-auto font-medium border-t-2">
                     <li><SideBarIcon icon={<Settings className="w-5 h-5" />} text="Setting" /></li>
