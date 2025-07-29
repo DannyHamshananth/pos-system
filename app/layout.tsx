@@ -19,7 +19,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <div className="flex min-h-screen">
           <SideBar />
-          <div className="flex-1 overflow-none">
+          <div className="flex-1 min-w-[400px] overflow-none">
             {children}  
           </div>
         </div>
