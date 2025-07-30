@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { RefreshCw, Download, Plus } from "lucide-react";
 
 import { ProductList, columns } from "@/app/product/columns";
@@ -51,16 +51,21 @@ const products = [
 ]
 
 export default function Sale() {
+    const shopname = process.env.NEXT_PUBLIC_SHOP_NAME;
+    const shopadress = process.env.NEXT_PUBLIC_SHOP_ADDRESS;
+    const shopcontact = process.env.NEXT_PUBLIC_SHOP_CONTACT;
+
     const [refresh, setRefresh] = useState(true);
     const [data, setData] = useState<ProductList[]>([]);
     
     const [open, setOpen] = useState(false)
-    const [value, setValue] = useState("")
+    const [value, setValue] = useState(0)
 
     const [qty, setQty] = useState(0)
 
     type pr_line = {id:any,qty:number};
     const [pr_lines, setpr_line] = useState<pr_line[]>([]);
+    const [offer, setOffer] = useState(0)
 
     const printRef = useRef<HTMLDivElement>(null);
 
@@ -121,11 +126,11 @@ export default function Sale() {
 
 
   return (
-    <div className="w-full mx-auto lg:mx-20 max-w-fit px-8 py-4">
+    <div className="w-full mx-auto lg:mx-25 max-w-fit px-8 py-4">
       <h1 className="font-bold text-2xl flex text-left">
         Sales
       </h1>
-      <div className="mt-5 gap-2 flex flex-col sm:flex-row">
+      <div className="mt-5 gap-2 flex flex-col md:flex-row">
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -174,16 +179,15 @@ export default function Sale() {
           </PopoverContent>
         </Popover>
         <Input className="flex-1" disabled={pr_lines.length?false:true} type="number" id="qty" value={pr_lines.length?pr_lines.find(pr_line => (pr_line.id===value))?.qty:0} onChange={qtyChange} placeholder="Quantity" />
-        {/* <Input className="flex-1" type="number" id="qty" min={1} value={qty} onChange={(e) => setQty(parseInt(e.target.value))} placeholder="Quantity" /> */}
+        <Input className="flex-1" disabled={pr_lines.length?false:true} type="number" value={offer} placeholder="Discount (Rs.)" onChange={(e)=> setOffer(parseInt(e.target.value))}/>
       </div>
 
       <div ref={printRef} id="print-section" className="max-w-sm mx-auto bg-white p-4 border border-gray-200 mt-10">
         {/* Header */}
         <div className="full-width flex mb-4">
           <div className="mx-auto">
-            <h2 className="text-center text-xl font-semibold text-gray-700">Dream Factory Cakes</h2>
-            <h2 className="text-center text-xl font-semibold text-gray-700">Surprise Delivery </h2>
-            <p className="text-sm text-gray-500 text-center">Navalar Road, Jaffna.</p>
+            <h2 className="text-center text-xl font-semibold text-gray-700">{shopname}</h2>
+            <p className="text-sm text-gray-500 text-center">{shopadress}</p>
           </div>
         </div>
 
@@ -235,12 +239,12 @@ export default function Sale() {
                 <span>{pr_lines.reduce((sum,pr_line)=> sum + products.find(product=> product.value === pr_line.id)!.unitprice*pr_line.qty, 0)}</span>
               </div>
               <div className="flex justify-between py-1">
-                <span>Discount</span>
-                <span>0</span>
+                <span>Off.</span>
+                <span>{offer}</span>
               </div>
               <div className="flex justify-between font-bold text-gray-900 py-2 border-t border-gray-300">
                 <span>Total</span>
-                <span>350Rs</span>
+                <span>{pr_lines.reduce((sum,pr_line)=> sum + products.find(product=> product.value === pr_line.id)!.unitprice*pr_line.qty, 0)-offer}</span>
               </div>
             </div>
           </div>
@@ -248,7 +252,7 @@ export default function Sale() {
 
         {/* Footer */}
         <div className="mt-4 text-xs text-gray-500 text-center">
-          Thank you for your visit. If you have any questions, contact/whatsapp +9477xxxxxxx.
+          Thank you for your purchase! For questions or future orders, contact us via phone or WhatsApp {shopcontact}.
         </div>
       </div>
       <div className="w-full h-[30px] mt-2 inline-grid grid-cols-2 gap-4">
