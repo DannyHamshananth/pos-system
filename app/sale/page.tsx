@@ -3,15 +3,13 @@
 import React, { useState, useRef } from "react";
 import { RefreshCw, Download, Plus } from "lucide-react";
 
-import { getProducts } from "@/lib/product";
-
 import { ProductList, columns } from "@/app/product/columns";
 
 import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/ui/dataTable";
 import { Input } from "@/components/ui/input";
 
 import { Check, ChevronsUpDown } from "lucide-react"
+import { format } from 'date-fns'
 
 import {
   Command,
@@ -27,6 +25,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
+import { setPriority } from "os";
 
 const products = [
   {
@@ -58,12 +57,10 @@ export default function Sale() {
     const [open, setOpen] = useState(false)
     const [value, setValue] = useState("")
 
-    const [qty, setQty] = useState(1)
+    const [qty, setQty] = useState(0)
 
-    type pr_line = {id:any,qty:Number};
+    type pr_line = {id:any,qty:number};
     const [pr_lines, setpr_line] = useState<pr_line[]>([]);
-
-    const [pl, setpl] = useState<String[]>([]);
 
     const printRef = useRef<HTMLDivElement>(null);
 
@@ -71,18 +68,19 @@ export default function Sale() {
       if (!searchpline(currentValue)){
         setpr_line(prev => {
         const updated = [...prev, {id: currentValue, qty:1}];
-        // setValue(updated[updated.length-1].id)
+        setValue(updated[updated.length-1].id)
         return updated;
       })
       } else { 
         removeItem(currentValue);
       }
-      setValue(pr_lines[setpr_line.length-1]?.id)
+      // setValue(pr_lines[setpr_line.length-1]?.id)
     };
 
     const removeItem = (id:Number) => {
       setpr_line(prevpl => {
         const updated = prevpl.filter(prl => prl.id !== id);
+        setValue(updated[updated.length-1]?.id)
         return updated;
       });
     };
@@ -91,7 +89,15 @@ export default function Sale() {
       return pr_lines.some(pr => pr.id === id)
     };
 
-      const handlePrint = () => {
+    const qtyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setpr_line(prev =>
+        prev.map(pr_line =>
+          pr_line.id === value ? { ...pr_line, ...{id:value,qty:parseInt(e.target.value)} }: pr_line
+        )
+      );
+    }
+
+    const handlePrint = () => {
     if (!printRef.current) return;
 
     // Add class to body to signal print mode
@@ -107,6 +113,11 @@ export default function Sale() {
 
     window.addEventListener('afterprint', cleanup);
   };
+
+  const gen_saleref = () => {
+    const id = format(new Date(), 'yyMMdd') + Math.floor(Math.random() * 1000);
+    return id;
+  }
 
 
   return (
@@ -140,7 +151,7 @@ export default function Sale() {
                       key={product.value}
                       value={product.value}
                       onSelect={(currentValue) => {
-                        setValue(currentValue === value ? "" : currentValue)
+                        // setValue(currentValue === value ? "" : currentValue)
                         // currentValue === value ? removeItem(currentValue):addItem(currentValue)
                         addItem(currentValue)
                         // removeItem(currentValue)
@@ -162,7 +173,8 @@ export default function Sale() {
             </Command>
           </PopoverContent>
         </Popover>
-        <Input className="flex-1" type="number" id="qty" min={1} value={qty} onChange={(e) => setQty(parseInt(e.target.value))} placeholder="Quantity" />
+        <Input className="flex-1" disabled={pr_lines.length?false:true} type="number" id="qty" value={pr_lines.length?pr_lines.find(pr_line => (pr_line.id===value))?.qty:0} onChange={qtyChange} placeholder="Quantity" />
+        {/* <Input className="flex-1" type="number" id="qty" min={1} value={qty} onChange={(e) => setQty(parseInt(e.target.value))} placeholder="Quantity" /> */}
       </div>
 
       <div ref={printRef} id="print-section" className="max-w-sm mx-auto bg-white p-4 border border-gray-200 mt-10">
@@ -185,11 +197,14 @@ export default function Sale() {
           </div>
           <div className="flex-1 text-right">
             <h3 className="text-sm font-semibold text-gray-600 mb-1">Invoice Date:</h3>
-            <p className="text-sm text-gray-700">July 26, 2025</p>
+            {/* <p className="text-sm text-gray-700">{format(new Date(), 'yyyy-MMM-dd')}</p>
+            <p className="text-sm text-gray-700">{format(new Date(), 'h:mm a')}</p> */}
+            <p className="text-sm text-gray-700">{'est'}</p>
+            <p className="text-sm text-gray-700">{'test'}</p>
           </div>
         </div>
         <div className="text-center">
-          <h3 className="text-sm font-semibold text-gray-600 mt-2">Invoice No: 251012</h3>
+          <h3 className="text-sm font-semibold text-gray-600 mt-2">Invoice No:Test</h3>
         </div>
 
         {/* Table Header */}
@@ -202,27 +217,22 @@ export default function Sale() {
 
         {/* Line Items */}
         <div className="divide-y divide-gray-200 text-sm text-gray-700">
-          <div className="grid grid-cols-6">
-            <div className="col-span-3">Red Velvet Cake</div>
-            <div className="text-center">1</div>
-            <div className="text-right">250</div>
-            <div className="text-right col-end-7">250</div>
-          </div>
-          <div className="grid grid-cols-6">
-            <div className="col-span-3">Veg Cake</div>
-            <div className="text-center">1</div>
-            <div className="text-right">100</div>
-            <div className="text-right col-end-7">100</div>
-          </div>
+          {pr_lines.map((prline,index)=>(
+            <div className="grid grid-cols-6">
+              <div className="col-span-3">{products.find(product=> product.value === prline.id)?.label}</div>
+              <div className="text-center">{prline.qty.toString()}</div>
+              <div className="text-right">{products.find(product=> product.value === prline.id)?.unitprice}</div>
+              <div className="text-right col-end-7">{prline?.qty.valueOf()*(products.find(product=> product.value === prline.id)?.unitprice??0)}</div>
+            </div>
+          ))}
         </div>
-
         {/* Totals */}
         <div className="mt-6 text-sm text-gray-800">
           <div className="flex justify-end">
             <div className="w-1/2">
               <div className="flex justify-between py-1">
                 <span>Subtotal</span>
-                <span>350Rs.</span>
+                <span>{pr_lines.reduce((sum,pr_line)=> sum + products.find(product=> product.value === pr_line.id)!.unitprice*pr_line.qty, 0)}</span>
               </div>
               <div className="flex justify-between py-1">
                 <span>Discount</span>
@@ -237,8 +247,8 @@ export default function Sale() {
         </div>
 
         {/* Footer */}
-        <div className="mt-8 text-xs text-gray-500 text-center">
-          Thank you for your business. If you have any questions, contact support@example.com.
+        <div className="mt-4 text-xs text-gray-500 text-center">
+          Thank you for your visit. If you have any questions, contact/whatsapp +9477xxxxxxx.
         </div>
       </div>
       <div className="w-full h-[30px] mt-2 inline-grid grid-cols-2 gap-4">
