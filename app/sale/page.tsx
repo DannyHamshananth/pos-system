@@ -217,8 +217,8 @@ export default function Sale() {
 
         {/* Line Items */}
         <div className="text-sm text-gray-700">
-          {pr_lines.length>0?pr_lines.map((prline,index)=>(
-            <div className="grid grid-cols-6">
+          {pr_lines.length>0?pr_lines.map((prline)=>(
+            <div className="grid grid-cols-6" key={prline.id}>
               <div className="col-span-3">{products.find(product=> product.id == prline.id)?.product_name}</div>
               <div className="text-center">{prline.qty.toString()}</div>
               <div className="text-right">{products.find(product=> product.id == prline.id)?.unitprice}</div>
