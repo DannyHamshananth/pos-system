@@ -217,14 +217,14 @@ export default function Sale() {
 
         {/* Line Items */}
         <div className="text-sm text-gray-700">
-          {pr_lines.map((prline,index)=>(
+          {pr_lines.length>0?pr_lines.map((prline,index)=>(
             <div className="grid grid-cols-6">
               <div className="col-span-3">{products.find(product=> product.id == prline.id)?.product_name}</div>
               <div className="text-center">{prline.qty.toString()}</div>
               <div className="text-right">{products.find(product=> product.id == prline.id)?.unitprice}</div>
               <div className="text-right col-end-7">{prline.qty*products.find(product=> product.id == prline.id)!.unitprice}</div>
             </div>
-          ))}
+          )):<div className="text-center">No items added yet.</div>}
         </div>
         {/* Totals */}
         <div className="mt-6 text-sm text-gray-800">
