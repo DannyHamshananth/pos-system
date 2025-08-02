@@ -65,15 +65,9 @@ export const columns: ColumnDef<ProductList>[] = [
         }
     },
     {
-        accessorKey: "buyUnitPrice",
+        accessorKey: "unitPrice",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="unit price (buy)" />
-        ),
-    },
-    {
-        accessorKey: "suggestedUnitPrice",
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="unit price (suggested)" />
         ),
     },
     {
