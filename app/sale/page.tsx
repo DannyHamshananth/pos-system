@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { RefreshCw, Download, Plus } from "lucide-react";
+import { RefreshCw, Download, Plus , MailIcon} from "lucide-react";
 
 import { ProductList, columns } from "@/app/product/columns";
 
@@ -26,27 +26,78 @@ import {
 } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 import { setPriority } from "os";
+import { Label } from "@/components/ui/label";
 
 const products = [
   {
     id: 1,
-    product_name: "Veg Cake",
-    unitprice: 90,
-  },
-  {
-    id: 2,
-    product_name: "Egg Cake",
+    product_name: "Butter cake piece",
     unitprice: 100,
   },
   {
+    id: 2,
+    product_name: "Butter cake with icing piece",
+    unitprice: 150,
+  },
+  {
     id: 3,
+    product_name: "Chocolate cake piece",
+    unitprice: 120,
+  },
+  {
+    id: 4,
+    product_name: "Chocolate with icing cake piece",
+    unitprice: 150,
+  },
+  {
+    id: 5,
+    product_name: "Veg Butter cake piece",
+    unitprice: 100,
+  },
+  {
+    id: 6,
     product_name: "Red Velvet Cake",
     unitprice: 150,
   },
   {
-    id: 4,
-    product_name: "Brownie",
+    id: 7,
+    product_name: "Dates veg cake piece",
+    unitprice: 150,
+  },
+  {
+    id: 8,
+    product_name: "Cup cake",
+    unitprice: 150,
+  },
+  {
+    id: 9,
+    product_name: "Donut",
+    unitprice: 150,
+  },
+  {
+    id: 10,
+    product_name: "Brownie with chocolate",
     unitprice: 250,
+  },
+  {
+    id: 11,
+    product_name: "Peanut biscuit",
+    unitprice: 60,
+  },
+  {
+    id: 12,
+    product_name: "Rich cake",
+    unitprice: 150,
+  },
+  {
+    id: 13,
+    product_name: "Kesari",
+    unitprice: 70,
+  },
+  {
+    id: 14,
+    product_name: "Pineapple Cake",
+    unitprice: 70,
   },
 ]
 
@@ -130,6 +181,8 @@ export default function Sale() {
         Sales
       </h1>
       <div className="mt-5 gap-2 flex flex-col md:flex-row">
+        <div className="flex-1 grid w-full max-w-sm items-center gap-1">
+        <Label htmlFor="product">Add product</Label>
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -146,7 +199,7 @@ export default function Sale() {
           </PopoverTrigger>
           <PopoverContent className="p-0 full-width">
             <Command className="flex-1">
-              <CommandInput placeholder="Search framework..." className="h-9" />
+              <CommandInput id="product" placeholder="Search framework..." className="h-9" />
               <CommandList>
                 <CommandEmpty>No framework found.</CommandEmpty>
                 <CommandGroup>
@@ -173,8 +226,23 @@ export default function Sale() {
             </Command>
           </PopoverContent>
         </Popover>
-        <Input className="flex-1" disabled={pr_lines.length?false:true} type="number" id="qty" value={(pr_lines.length?pr_lines.find(pr_line => (pr_line.id===value))?.qty:0)?.toString()} onChange={qtyChange} placeholder="Quantity" />
-        <Input className="flex-1" disabled={pr_lines.length?false:true} type="number" value={offer} placeholder="Discount (Rs.)" onChange={(e)=> setOffer(parseInt(e.target.value))}/>
+        </div>
+        {/* <Input className="flex-1" disabled={pr_lines.length?false:true} type="number" id="qty" value={(pr_lines.length?pr_lines.find(pr_line => (pr_line.id===value))?.qty:0)?.toString()} onChange={qtyChange} placeholder="Quantity" />
+        <Input className="flex-1" disabled={pr_lines.length?false:true} type="number" value={offer} placeholder="Discount (Rs.)" onChange={(e)=> setOffer(parseInt(e.target.value))}/> */}
+
+        <div className="flex-1 grid w-full max-w-sm items-center gap-1">
+          <Label htmlFor="qty">Quantity</Label>
+          <Input disabled={pr_lines.length?false:true} type="number" id="qty" value={(pr_lines.length?pr_lines.find(pr_line => (pr_line.id===value))?.qty:0)?.toString()} onChange={qtyChange} placeholder="Quantity" />
+        </div>
+        <div className="flex-1 grid w-full max-w-sm items-center gap-1">
+          <Label htmlFor="offer">Offer (Deduction in Rs.)</Label>
+          <Input className="flex-1" disabled={pr_lines.length?false:true} type="number" id="offer" value={offer} placeholder="Discount (Rs.)" onChange={(e)=> setOffer(parseInt(e.target.value))}/>
+        </div>
+
+        {/* <div className="grid w-full max-w-sm items-center gap-3">
+          <Label htmlFor="email">Email</Label>
+          <Input type="email" id="email" placeholder="Email" />
+        </div> */}
       </div>
 
       <div ref={printRef} id="print-section" className="max-w-sm mx-auto bg-white p-4 border border-gray-200 mt-10">
