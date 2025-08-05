@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { RefreshCw, Download, Plus , MailIcon} from "lucide-react";
+import { RefreshCw, Download, Plus , MailIcon, Printer} from "lucide-react";
 
 import { ProductList, columns } from "@/app/product/columns";
 
@@ -71,7 +71,7 @@ const products = [
   },
   {
     id: 9,
-    product_name: "Donut",
+    product_name: "Doughnut",
     unitprice: 150,
   },
   {
@@ -97,7 +97,7 @@ const products = [
   {
     id: 14,
     product_name: "Pineapple Cake",
-    unitprice: 70,
+    unitprice: 200,
   },
 ]
 
@@ -113,11 +113,11 @@ export default function Sale() {
 
     const [date, setDate] = useState("")
     const [time, setTime] = useState("")
-    const [invoicenum, setInvoiceNum] = useState("");
+    const [invoicenum, setInvoiceNum] = useState<Number>();
     useEffect(() => {
       setDate(format(new Date(), 'yyyy-MMM-dd'))
       setTime(format(new Date(), 'hh:mma'))
-      setInvoiceNum(format(new Date(), 'yyMMdd').toString() + Math.floor(Math.random() * 100))
+      setInvoiceNum(parseInt(format(new Date(), 'MMddhhmm') + Math.floor(Math.random() * 10)))
     }, []);
 
     type pr_line = {id:number,qty:number};
@@ -129,7 +129,7 @@ export default function Sale() {
     const addItem = (currentValue:any) => {
       if (!searchpline(currentValue)){
         setpr_line(prev => {
-        const updated = [...prev, {id: currentValue, qty:1}];
+        const updated = [...prev, {id: parseInt(currentValue), qty:1}];
         setValue(updated[updated.length-1].id)
         return updated;
       })
@@ -156,6 +156,17 @@ export default function Sale() {
           pr_line.id === value ? { ...pr_line, ...{id:value,qty:parseInt(e.target.value)} }: pr_line
         )
       );
+    }
+
+    const completeSale = () => {
+      if (pr_lines.length == 0) {
+        alert('No items selected!')
+      } else {
+        console.log(pr_lines);
+        console.log(date);
+        console.log(time);
+        console.log(typeof(invoicenum));
+      }
     }
 
     const handlePrint = () => {
@@ -199,9 +210,9 @@ export default function Sale() {
           </PopoverTrigger>
           <PopoverContent className="p-0 full-width">
             <Command className="flex-1">
-              <CommandInput id="product" placeholder="Search framework..." className="h-9" />
+              <CommandInput id="product" placeholder="Search products..." className="h-9" />
               <CommandList>
-                <CommandEmpty>No framework found.</CommandEmpty>
+                <CommandEmpty>No product found.</CommandEmpty>
                 <CommandGroup>
                   {products.map((product) => (
                     <CommandItem
@@ -212,11 +223,11 @@ export default function Sale() {
                         setOpen(false)
                       }}
                     >
-                      {product.product_name.toString()}
+                      {product.product_name}
                       <Check
                         className={cn(
                           "ml-auto",
-                           searchpline(product.id.toString()) ? "opacity-100" : "opacity-0"
+                           searchpline(product.id) ? "opacity-100" : "opacity-0"
                         )}
                       />
                     </CommandItem>
@@ -272,7 +283,7 @@ export default function Sale() {
           </div>
         </div>
         <div className="text-center">
-          <h3 className="text-sm font-semibold text-gray-600 mt-2">Invoice No:{invoicenum}</h3>
+          <h3 className="text-sm font-semibold text-gray-600 mt-2">Invoice No:{invoicenum?.toString()}</h3>
         </div>
 
         {/* Table Header */}
@@ -304,7 +315,7 @@ export default function Sale() {
               </div>
               <div className="flex justify-between py-1">
                 <span>Off.</span>
-                <span>{offer}</span>
+                <span>{isNaN(offer)?0:offer}</span>
               </div>
               <div className="flex justify-between font-bold text-gray-900 py-2 border-t border-gray-500">
                 <span>Total</span>
@@ -319,18 +330,19 @@ export default function Sale() {
           Thank you for your purchase! For questions or future orders, contact us via phone or WhatsApp {shopcontact}.
         </div>
       </div>
-      <div className="w-full h-[30px] mt-2 inline-grid grid-cols-2 gap-4">
+      <div className="w-full h-[40px] mt-2 inline-grid grid-cols-2 gap-4">
         <button
-          className="bg-blue-600 text-white rounded"
+          className="bg-green-500 text-white rounded"
+          onClick={completeSale}
         >
           Sale
         </button>
-        <button
+        <Button
           onClick={handlePrint}
-          className="bg-blue-600 text-white rounded"
+          className="bg-blue-600 text-white rounded gap-4"
         >
-          Print
-        </button>
+          <Printer/> Print Invoice
+        </Button>
       </div>            
     </div>
   )
