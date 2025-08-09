@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { Check, ChevronsUpDown } from "lucide-react"
-import { format } from 'date-fns'
+import { format, formatISO } from 'date-fns'
 
 import {
   Command,
@@ -31,73 +31,73 @@ import { Label } from "@/components/ui/label";
 const products = [
   {
     id: 1,
-    product_name: "Butter cake piece",
-    unitprice: 100,
+    name: "Butter cake piece",
+    unitPrice: 100,
   },
   {
     id: 2,
-    product_name: "Butter cake with icing piece",
-    unitprice: 150,
+    name: "Butter cake with icing piece",
+    unitPrice: 150,
   },
   {
     id: 3,
-    product_name: "Chocolate cake piece",
-    unitprice: 120,
+    name: "Chocolate cake piece",
+    unitPrice: 120,
   },
   {
     id: 4,
-    product_name: "Chocolate with icing cake piece",
-    unitprice: 150,
+    name: "Chocolate with icing cake piece",
+    unitPrice: 150,
   },
   {
     id: 5,
-    product_name: "Veg Butter cake piece",
-    unitprice: 100,
+    name: "Veg Butter cake piece",
+    unitPrice: 100,
   },
   {
     id: 6,
-    product_name: "Red Velvet Cake",
-    unitprice: 150,
+    name: "Red Velvet Cake",
+    unitPrice: 150,
   },
   {
     id: 7,
-    product_name: "Dates veg cake piece",
-    unitprice: 150,
+    name: "Dates veg cake piece",
+    unitPrice: 150,
   },
   {
     id: 8,
-    product_name: "Cup cake",
-    unitprice: 150,
+    name: "Cup cake",
+    unitPrice: 150,
   },
   {
     id: 9,
-    product_name: "Doughnut",
-    unitprice: 150,
+    name: "Doughnut",
+    unitPrice: 150,
   },
   {
     id: 10,
-    product_name: "Brownie with chocolate",
-    unitprice: 250,
+    name: "Brownie with chocolate",
+    unitPrice: 250,
   },
   {
     id: 11,
-    product_name: "Peanut biscuit",
-    unitprice: 60,
+    name: "Peanut biscuit",
+    unitPrice: 60,
   },
   {
     id: 12,
-    product_name: "Rich cake",
-    unitprice: 150,
+    name: "Rich cake",
+    unitPrice: 150,
   },
   {
     id: 13,
-    product_name: "Kesari",
-    unitprice: 70,
+    name: "Kesari",
+    unitPrice: 70,
   },
   {
     id: 14,
-    product_name: "Pineapple Cake",
-    unitprice: 200,
+    name: "Pineapple Cake",
+    unitPrice: 200,
   },
 ]
 
@@ -113,24 +113,29 @@ export default function Sale() {
 
     const [date, setDate] = useState("")
     const [time, setTime] = useState("")
-    const [invoicenum, setInvoiceNum] = useState<Number>();
+    const [saleDate, setSaleDate] = useState("")
+    const [invoicenum, setInvoiceNum] = useState<number>();
+
+    const [isBtnVisible, setIsBtnVisible] = useState(false);
+
     useEffect(() => {
-      setDate(format(new Date(), 'yyyy-MMM-dd'))
-      setTime(format(new Date(), 'hh:mma'))
+      setDate(format(new Date(), 'yyyy-MMM-dd'));
+      setTime(format(new Date(), 'hh:mma'));
+      setSaleDate(format(new Date(), 'yyyy-MM-dd HH:mm:ss').replace(" ", "T") + "Z")
       setInvoiceNum(parseInt(format(new Date(), 'MMddhhmm') + Math.floor(Math.random() * 10)))
     }, []);
 
-    type pr_line = {id:number,qty:number};
+    type pr_line = {productId:number,quantity:number};
     const [pr_lines, setpr_line] = useState<pr_line[]>([]);
-    const [offer, setOffer] = useState(0)
+    const [discount, setDiscount] = useState(0)
 
     const printRef = useRef<HTMLDivElement>(null);
 
-    const addItem = (currentValue:any) => {
+    const addItem = (currentValue:number) => {
       if (!searchpline(currentValue)){
         setpr_line(prev => {
-        const updated = [...prev, {id: parseInt(currentValue), qty:1}];
-        setValue(updated[updated.length-1].id)
+        const updated = [...prev, {productId: currentValue, quantity:1}];
+        setValue(updated[updated.length-1].productId)
         return updated;
       })
       } else { 
@@ -138,34 +143,45 @@ export default function Sale() {
       }
     };
 
-    const removeItem = (id:Number) => {
+    const removeItem = (id:number) => {
       setpr_line(prevpl => {
-        const updated = prevpl.filter(prl => prl.id !== id);
-        setValue(updated[updated.length-1]?.id)
+        const updated = prevpl.filter(prl => prl.productId !== id);
+        setValue(updated[updated.length-1]?.productId)
         return updated;
       });
     };
 
-    const searchpline = (id:any) => {
-      return pr_lines.some(pr => pr.id === id)
+    const searchpline = (id:number) => {
+      return pr_lines.some(pr => pr.productId === id)
     };
 
     const qtyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setpr_line(prev =>
         prev.map(pr_line =>
-          pr_line.id === value ? { ...pr_line, ...{id:value,qty:parseInt(e.target.value)} }: pr_line
+          pr_line.productId === value ? { ...pr_line, ...{productId:value,quantity:parseInt(e.target.value)} }: pr_line
         )
       );
     }
 
-    const completeSale = () => {
+    const completeSale = async () => {
       if (pr_lines.length == 0) {
         alert('No items selected!')
       } else {
         console.log(pr_lines);
-        console.log(date);
-        console.log(time);
-        console.log(typeof(invoicenum));
+        const subTotal = pr_lines.reduce((sum,pr_line)=> sum + products.find(product=> product.id == pr_line.productId)!.unitPrice*pr_line.quantity, 0);
+        const total = subTotal - discount;
+        const res = await fetch(`api/sales`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({invoicenum, saleLine:pr_lines, subTotal, discount, total, saleDate}),
+            cache: 'no-store',
+        });
+
+        if (res.status === 201) {
+          setIsBtnVisible(true);
+        }
       }
     }
 
@@ -203,7 +219,7 @@ export default function Sale() {
               className="flex-1 justify-between"
             >
               {pr_lines.length >0
-                ? products.find(product => product.id == pr_lines[pr_lines.length-1]?.id)?.product_name
+                ? products.find(product => product.id == pr_lines[pr_lines.length-1]?.productId)?.name
                 : "Select product"}
               <ChevronsUpDown className="opacity-50" />
             </Button>
@@ -219,11 +235,11 @@ export default function Sale() {
                       key={product.id}
                       value={product.id.toString()}
                       onSelect={(currentValue) => {
-                        addItem(currentValue)
+                        addItem(parseInt(currentValue))
                         setOpen(false)
                       }}
                     >
-                      {product.product_name}
+                      {product.name}
                       <Check
                         className={cn(
                           "ml-auto",
@@ -243,17 +259,12 @@ export default function Sale() {
 
         <div className="flex-1 grid w-full max-w-sm items-center gap-1">
           <Label htmlFor="qty">Quantity</Label>
-          <Input disabled={pr_lines.length?false:true} type="number" id="qty" value={(pr_lines.length?pr_lines.find(pr_line => (pr_line.id===value))?.qty:0)?.toString()} onChange={qtyChange} placeholder="Quantity" />
+          <Input disabled={pr_lines.length?false:true} type="number" id="qty" value={(pr_lines.length?pr_lines.find(pr_line => (pr_line.productId==value))?.quantity:0)?.toString()} onChange={qtyChange} placeholder="Quantity" />
         </div>
         <div className="flex-1 grid w-full max-w-sm items-center gap-1">
-          <Label htmlFor="offer">Offer (Deduction in Rs.)</Label>
-          <Input className="flex-1" disabled={pr_lines.length?false:true} type="number" id="offer" value={offer} placeholder="Discount (Rs.)" onChange={(e)=> setOffer(parseInt(e.target.value))}/>
+          <Label htmlFor="offer">Off./Discount (In Rs.)</Label>
+          <Input className="flex-1" disabled={pr_lines.length?false:true} type="number" id="offer" value={discount} placeholder="Discount (Rs.)" onChange={(e)=> setDiscount(parseInt(e.target.value))}/>
         </div>
-
-        {/* <div className="grid w-full max-w-sm items-center gap-3">
-          <Label htmlFor="email">Email</Label>
-          <Input type="email" id="email" placeholder="Email" />
-        </div> */}
       </div>
 
       <div ref={printRef} id="print-section" className="max-w-sm mx-auto bg-white p-4 border border-gray-200 mt-10">
@@ -297,11 +308,11 @@ export default function Sale() {
         {/* Line Items */}
         <div className="text-sm text-gray-700">
           {pr_lines.length>0?pr_lines.map((prline)=>(
-            <div className="grid grid-cols-6" key={prline.id}>
-              <div className="col-span-3">{products.find(product=> product.id == prline.id)?.product_name}</div>
-              <div className="text-center">{prline.qty.toString()}</div>
-              <div className="text-right">{products.find(product=> product.id == prline.id)?.unitprice}</div>
-              <div className="text-right col-end-7">{prline.qty*products.find(product=> product.id == prline.id)!.unitprice}</div>
+            <div className="grid grid-cols-6" key={prline.productId}>
+              <div className="col-span-3">{products.find(product=> product.id == prline.productId)?.name}</div>
+              <div className="text-center">{prline.quantity.toString()}</div>
+              <div className="text-right">{products.find(product=> product.id == prline.productId)?.unitPrice}</div>
+              <div className="text-right col-end-7">{prline.quantity*products.find(product=> product.id == prline.productId)!.unitPrice}</div>
             </div>
           )):<div className="text-center">No items added yet.</div>}
         </div>
@@ -311,15 +322,15 @@ export default function Sale() {
             <div className="w-1/2">
               <div className="flex justify-between py-1">
                 <span>Subtotal</span>
-                <span>{pr_lines.reduce((sum,pr_line)=> sum + products.find(product=> product.id == pr_line.id)!.unitprice*pr_line.qty, 0)}</span>
+                <span>{pr_lines.reduce((sum,pr_line)=> sum + products.find(product=> product.id == pr_line.productId)!.unitPrice*pr_line.quantity, 0)}</span>
               </div>
               <div className="flex justify-between py-1">
                 <span>Off.</span>
-                <span>{isNaN(offer)?0:offer}</span>
+                <span>{isNaN(discount)?0:discount}</span>
               </div>
               <div className="flex justify-between font-bold text-gray-900 py-2 border-t border-gray-500">
                 <span>Total</span>
-                <span>Rs. {(pr_lines.reduce((sum,pr_line)=> sum + products.find(product=> product.id == pr_line.id)!.unitprice*pr_line.qty, 0)-offer).toLocaleString()}</span>
+                <span>Rs. {(pr_lines.reduce((sum,pr_line)=> sum + products.find(product=> product.id == pr_line.productId)!.unitPrice*pr_line.quantity, 0)-discount).toLocaleString()}</span>
               </div>
             </div>
           </div>
@@ -331,12 +342,13 @@ export default function Sale() {
         </div>
       </div>
       <div className="w-full h-[40px] mt-2 inline-grid grid-cols-2 gap-4">
-        <button
+        <Button
           className="bg-green-500 text-white rounded"
           onClick={completeSale}
+          disabled={isBtnVisible}
         >
           Sale
-        </button>
+        </Button>
         <Button
           onClick={handlePrint}
           className="bg-blue-600 text-white rounded gap-4"
