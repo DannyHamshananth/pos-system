@@ -1,11 +1,23 @@
 import { prisma } from "@/lib/prisma"
-import { id } from "date-fns/locale";
 import { NextResponse, NextRequest } from "next/server"
 
 export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const start_time = searchParams.get('start_time')|| undefined;
+  const end_time = searchParams.get('end_time')|| undefined;
+  
+  console.log(start_time);
+  console.log(end_time);
+
   const sales = await prisma.sale.findMany({
+    where: {
+      saleDate: {
+        gte: start_time,
+        lte: end_time
+      }
+    },
     include: {
-      saleLine: { select: { product: { select: { name: true } }, quantity: true } },
+      saleLine: { select: { product: { select: { name: true, unitPrice: true} }, quantity: true } },
     }
   });
   return NextResponse.json(sales);

@@ -4,12 +4,25 @@ import { NextResponse, NextRequest } from "next/server"
 import { productOperations } from "@/lib/product"
 
 export async function GET(request: Request) {
+  const operation = request.headers.get("product-operation");
+  if (operation === productOperations.getProductNamesDetailed) {
     const products = await prisma.product.findMany({
-        include: {
-            productCategory: true
-        }
+      include: {
+        productCategory: true
+      }
     });
     return NextResponse.json(products)
+  }
+    if (operation === productOperations.getProductNamesShorter) {
+    const products = await prisma.product.findMany({
+      select: {
+        id: true,
+        name: true,
+        unitPrice: true
+      }
+    });
+    return NextResponse.json(products)
+  }
 }
 
 export async function POST(req: NextRequest,res:NextResponse) {
