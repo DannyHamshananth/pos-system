@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Check, ChevronsUpDown } from "lucide-react"
 import { format, formatISO } from 'date-fns'
 
+import { getProducts, productOperations, Product} from "@/lib/product";
+
 import {
   Command,
   CommandEmpty,
@@ -28,85 +30,83 @@ import { cn } from "@/lib/utils"
 import { setPriority } from "os";
 import { Label } from "@/components/ui/label";
 
-const products = [
-  {
-    id: 1,
-    name: "Butter cake piece",
-    unitPrice: 100,
-  },
-  {
-    id: 2,
-    name: "Butter cake with icing piece",
-    unitPrice: 150,
-  },
-  {
-    id: 3,
-    name: "Chocolate cake piece",
-    unitPrice: 120,
-  },
-  {
-    id: 4,
-    name: "Chocolate with icing cake piece",
-    unitPrice: 150,
-  },
-  {
-    id: 5,
-    name: "Veg Butter cake piece",
-    unitPrice: 100,
-  },
-  {
-    id: 6,
-    name: "Red Velvet Cake",
-    unitPrice: 150,
-  },
-  {
-    id: 7,
-    name: "Dates veg cake piece",
-    unitPrice: 150,
-  },
-  {
-    id: 8,
-    name: "Cup cake",
-    unitPrice: 150,
-  },
-  {
-    id: 9,
-    name: "Doughnut",
-    unitPrice: 150,
-  },
-  {
-    id: 10,
-    name: "Brownie with chocolate",
-    unitPrice: 250,
-  },
-  {
-    id: 11,
-    name: "Peanut biscuit",
-    unitPrice: 60,
-  },
-  {
-    id: 12,
-    name: "Rich cake",
-    unitPrice: 150,
-  },
-  {
-    id: 13,
-    name: "Kesari",
-    unitPrice: 70,
-  },
-  {
-    id: 14,
-    name: "Pineapple Cake",
-    unitPrice: 200,
-  },
-]
+// const products = [
+//   {
+//     id: 1,
+//     name: "Butter cake piece",
+//     unitPrice: 100,
+//   },
+//   {
+//     id: 2,
+//     name: "Butter cake with icing piece",
+//     unitPrice: 150,
+//   },
+//   {
+//     id: 3,
+//     name: "Chocolate cake piece",
+//     unitPrice: 120,
+//   },
+//   {
+//     id: 4,
+//     name: "Chocolate with icing cake piece",
+//     unitPrice: 150,
+//   },
+//   {
+//     id: 5,
+//     name: "Veg Butter cake piece",
+//     unitPrice: 100,
+//   },
+//   {
+//     id: 6,
+//     name: "Red Velvet Cake",
+//     unitPrice: 150,
+//   },
+//   {
+//     id: 7,
+//     name: "Dates veg cake piece",
+//     unitPrice: 150,
+//   },
+//   {
+//     id: 8,
+//     name: "Cup cake",
+//     unitPrice: 150,
+//   },
+//   {
+//     id: 9,
+//     name: "Doughnut",
+//     unitPrice: 150,
+//   },
+//   {
+//     id: 10,
+//     name: "Brownie with chocolate",
+//     unitPrice: 250,
+//   },
+//   {
+//     id: 11,
+//     name: "Peanut biscuit",
+//     unitPrice: 60,
+//   },
+//   {
+//     id: 12,
+//     name: "Rich cake",
+//     unitPrice: 150,
+//   },
+//   {
+//     id: 13,
+//     name: "Kesari",
+//     unitPrice: 70,
+//   },
+//   {
+//     id: 14,
+//     name: "Pineapple Cake",
+//     unitPrice: 200,
+//   },
+// ]
 
 export default function Sale() {
     const shopname = process.env.NEXT_PUBLIC_SHOP_NAME;
     const shopadress = process.env.NEXT_PUBLIC_SHOP_ADDRESS;
     const shopcontact = process.env.NEXT_PUBLIC_SHOP_CONTACT;
-
-    const [refresh, setRefresh] = useState(true);
     
     const [open, setOpen] = useState(false)
     const [value, setValue] = useState(0)
@@ -115,14 +115,20 @@ export default function Sale() {
     const [time, setTime] = useState("")
     const [saleDate, setSaleDate] = useState("")
     const [invoicenum, setInvoiceNum] = useState<number>();
+    const [products, setProducts] = useState<Product[]>([]);
 
     const [isBtnVisible, setIsBtnVisible] = useState(false);
 
     useEffect(() => {
       setDate(format(new Date(), 'yyyy-MMM-dd'));
       setTime(format(new Date(), 'hh:mma'));
-      setSaleDate(format(new Date(), 'yyyy-MM-dd HH:mm:ss').replace(" ", "T") + "Z")
-      setInvoiceNum(parseInt(format(new Date(), 'MMddhhmm') + Math.floor(Math.random() * 10)))
+      setSaleDate(format(new Date(), 'yyyy-MM-dd HH:mm:ss').replace(" ", "T") + "Z");
+      setInvoiceNum(parseInt(format(new Date(), 'MMddhhmm') + Math.floor(Math.random() * 10)));
+      (async () => {
+        const data = await getProducts(productOperations.getProductNamesShorter);
+        console.log(data);
+        setProducts(data);
+      })();
     }, []);
 
     type pr_line = {productId:number,quantity:number};
