@@ -37,7 +37,7 @@ export function ResponsiveDataTable({ data }: { data: any[] }) {
                                     <TableCell>{sale.invoicenum}</TableCell>
                                     <TableCell>{format(new Date(sale.saleDate), "yyyy-MMM-dd")}</TableCell>
                                     <TableCell>{format(new Date(sale.saleDate), "hh:mma")}</TableCell>
-                                    <TableCell>{sale.saleLine.map((line: any)=>(
+                                    <TableCell>{sale.saleLine.map((line: any, index: any)=>(
                                         <div>{line.name + '('+ line.unitPrice +')'+ 'x' + line.quantity + '=' + line.quantity*line.unitPrice}</div>
                                     ))}
                                     </TableCell>
@@ -70,7 +70,7 @@ export function ResponsiveDataTable({ data }: { data: any[] }) {
                             <div className="text-right">
                                 <Table>
                                     <TableBody className="text-sm">
-                                        {sale.saleLine.map((line: any)=> (
+                                        {sale.saleLine.map((line: any, index: any)=> (
                                             <TableRow>
                                                 <TableCell className="p-0 text-xs">{line.name + 'x' + line.quantity+':'}</TableCell>
                                                 <TableCell className="p-0">{line.quantity*line.unitPrice}</TableCell>
