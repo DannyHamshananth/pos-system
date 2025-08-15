@@ -38,7 +38,7 @@ export function ResponsiveDataTable({ data }: { data: any[] }) {
                                     <TableCell>{format(new Date(sale.saleDate), "yyyy-MMM-dd")}</TableCell>
                                     <TableCell>{format(new Date(sale.saleDate), "hh:mma")}</TableCell>
                                     <TableCell>{sale.saleLine.map((line: any, index: any)=>(
-                                        <div>{line.name + '('+ line.unitPrice +')'+ 'x' + line.quantity + '=' + line.quantity*line.unitPrice}</div>
+                                        <div key={index}>{line.name + '('+ line.unitPrice +')'+ 'x' + line.quantity + '=' + line.quantity*line.unitPrice}</div>
                                     ))}
                                     </TableCell>
                                     <TableCell>{sale.subTotal}</TableCell>
@@ -71,7 +71,7 @@ export function ResponsiveDataTable({ data }: { data: any[] }) {
                                 <Table>
                                     <TableBody className="text-sm">
                                         {sale.saleLine.map((line: any, index: any)=> (
-                                            <TableRow>
+                                            <TableRow key={index}>
                                                 <TableCell className="p-0 text-xs">{line.name + 'x' + line.quantity+':'}</TableCell>
                                                 <TableCell className="p-0">{line.quantity*line.unitPrice}</TableCell>
                                             </TableRow>
