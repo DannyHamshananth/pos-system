@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { RefreshCw, Download, Plus, Loader2Icon, CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 
-import { getProducts } from "@/lib/product";
+import { getProducts, productOperations} from "@/lib/product";
 
 import { ProductList, columns } from "@/app/product/columns";
 
@@ -66,7 +66,7 @@ export default function Transaction() {
 
         setData([]);
         (async () => {
-            const data = await getProducts();
+            const data = await getProducts(productOperations.getProductNamesDetailed);
             setData(data);
             setRefresh(false);
         })();
