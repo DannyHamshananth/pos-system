@@ -1,7 +1,15 @@
 // import { orderOperations } from "./order"
 
+export interface Product {
+    id: number;
+    name: string;
+    unitPrice: number;
+}
+
 export enum productOperations{
     getProductNames,
+    getProductNamesDetailed = "getProductNamesDetailed",
+    getProductNamesShorter = "getProductNamesShorter"
 }
 
 type orderProductsSummaryResponse = {
@@ -29,8 +37,8 @@ export type orderProductsSummary = {
     orders: number
 }
 
-export async function getProducts() {
-    const res = await fetch(`api/products`, {
+export async function getProducts(operation: any) {
+    const res = await fetch(`api/products`, {method: "GET", headers: { "product-operation": operation }
     }).then((res) => res.json())
 
     return res
