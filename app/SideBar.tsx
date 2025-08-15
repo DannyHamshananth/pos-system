@@ -56,11 +56,11 @@ function SideBar() {
                 <ul className="space-y-5 font-medium">
                     <li><SideBarIcon icon={<Home className="w-5 h-5" />} text="Home" /></li>
                 </ul>
-                <ul className="pt-2 mt-2 space-y-5 font-medium border-t-2">
+                <ul className="mt-2 space-y-5 font-medium border-t-2">
                     <li><SideBarIcon icon={<Package className="w-5 h-5" />} text="Product" /></li>
                     <li><SideBarIcon icon={<ShoppingCart className="w-5 h-5" />} text="Sale" /></li>
-                    {/* <li><SideBarIcon icon={<LineChart className="w-5 h-5" />} text="Statistic" /></li>
-                    <li><SideBarIcon icon={<Coins className="w-5 h-5" />} text="Transaction" /></li>
+                    <li><SideBarIcon icon={<LineChart className="w-5 h-5" />} text="Stats" /></li>
+                    {/* <li><SideBarIcon icon={<Coins className="w-5 h-5" />} text="Transaction" /></li>
                     <li><SideBarIcon icon={<Receipt className="w-5 h-5" />} text="Expense" /></li> */}
                 </ul>
                 <ul className="pt-2 mt-auto font-medium border-t-2">
