@@ -1,15 +1,12 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { RefreshCw, Download, Plus , MailIcon, Printer} from "lucide-react";
-
-import { ProductList, columns } from "@/app/product/columns";
+import { Check, ChevronsUpDown, Printer} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import { Check, ChevronsUpDown } from "lucide-react"
-import { format, formatISO } from 'date-fns'
+import { format } from 'date-fns'
 
 import { getProducts, productOperations, Product} from "@/lib/product";
 
@@ -25,83 +22,10 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { cn } from "@/lib/utils"
-import { setPriority } from "os";
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
-
-// const products = [
-//   {
-//     id: 1,
-//     name: "Butter cake piece",
-//     unitPrice: 100,
-//   },
-//   {
-//     id: 2,
-//     name: "Butter cake with icing piece",
-//     unitPrice: 150,
-//   },
-//   {
-//     id: 3,
-//     name: "Chocolate cake piece",
-//     unitPrice: 120,
-//   },
-//   {
-//     id: 4,
-//     name: "Chocolate with icing cake piece",
-//     unitPrice: 150,
-//   },
-//   {
-//     id: 5,
-//     name: "Veg Butter cake piece",
-//     unitPrice: 100,
-//   },
-//   {
-//     id: 6,
-//     name: "Red Velvet Cake",
-//     unitPrice: 150,
-//   },
-//   {
-//     id: 7,
-//     name: "Dates veg cake piece",
-//     unitPrice: 150,
-//   },
-//   {
-//     id: 8,
-//     name: "Cup cake",
-//     unitPrice: 150,
-//   },
-//   {
-//     id: 9,
-//     name: "Doughnut",
-//     unitPrice: 150,
-//   },
-//   {
-//     id: 10,
-//     name: "Brownie with chocolate",
-//     unitPrice: 250,
-//   },
-//   {
-//     id: 11,
-//     name: "Peanut biscuit",
-//     unitPrice: 60,
-//   },
-//   {
-//     id: 12,
-//     name: "Rich cake",
-//     unitPrice: 150,
-//   },
-//   {
-//     id: 13,
-//     name: "Kesari",
-//     unitPrice: 70,
-//   },
-//   {
-//     id: 14,
-//     name: "Pineapple Cake",
-//     unitPrice: 200,
-//   },
-// ]
+import { toast } from "sonner";
 
 export default function Sale() {
     const shopname = process.env.NEXT_PUBLIC_SHOP_NAME;
@@ -119,6 +43,28 @@ export default function Sale() {
 
     const [isBtnVisible, setIsBtnVisible] = useState(false);
 
+  const showToast = (message: any, code: any) => {
+    if (code == 1) {
+      const id = toast.success(message, {
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss(id);   // 👈 closes this toast
+          },
+        },
+      })
+    } else {
+      const id = toast.error(message, {
+        action: {
+          label: "Close",
+          onClick: () => {
+            toast.dismiss(id);   // 👈 closes this toast
+          },
+        },
+      })
+    }
+  }
+
     useEffect(() => {
       setDate(format(new Date(), 'yyyy-MMM-dd'));
       setTime(format(new Date(), 'hh:mma'));
@@ -126,7 +72,6 @@ export default function Sale() {
       setInvoiceNum(parseInt(format(new Date(), 'MMddhhmm') + Math.floor(Math.random() * 10)));
       (async () => {
         const data = await getProducts(productOperations.getProductNamesShorter);
-        console.log(data);
         setProducts(data);
       })();
     }, []);
@@ -173,7 +118,6 @@ export default function Sale() {
       if (pr_lines.length == 0) {
         alert('No items selected!')
       } else {
-        console.log(pr_lines);
         const subTotal = pr_lines.reduce((sum,pr_line)=> sum + products.find(product=> product.id == pr_line.productId)!.unitPrice*pr_line.quantity, 0);
         const total = subTotal - discount;
         const res = await fetch(`api/sales`, {
@@ -187,6 +131,9 @@ export default function Sale() {
 
         if (res.status === 201) {
           setIsBtnVisible(true);
+          showToast("Sales Saved!", 1);
+        } else {
+          showToast("Error...!", 0);
         }
       }
     }
