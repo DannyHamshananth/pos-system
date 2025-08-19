@@ -30,11 +30,9 @@ function SideBarIcon({ icon, text }: { icon: React.JSX.Element, text: String }) 
 
     return (
         <Link href={modifiedHref}>
-            <div className={"relative flex items-center justify-center h-12 w-12 my-2 mx-auto transition-colors duration-300 ease-linear cursor-pointer group rounded-xl  text-zinc-900 bg-white " + (pathname === modifiedHref ? "border-2 border-zinc-900" : "hover:border-2 hover:border-zinc-400")}>
-                {icon}
-                <span className="absolute w-auto p-2 m-2 min-w-max left-14 rounded-md shadow-md text-white bg-zinc-900 text-xs font-bold z-50 transition-all duration-100 origin-left scale-0 group-hover:scale-100">
-                    {text}
-                </span>
+            <div className={"flex flex-col items-center gap-3 p-2 my-2 mx-auto rounded-xl transition-colors duration-300 ease-linear cursor-pointer text-zinc-900 bg-white " + (pathname === modifiedHref ? "border-2 border-zinc-900" : "hover:border-2 hover:border-zinc-400")}>
+                <div className="w-5 h-5 flex items-center justify-center">{icon}</div>
+                <div className="text-sm font-medium">{text}</div>
             </div>
         </Link>
     )
@@ -57,7 +55,7 @@ function SideBar() {
                     <li><SideBarIcon icon={<Home className="w-5 h-5" />} text="Home" /></li>
                 </ul>
                 <ul className="mt-2 space-y-5 font-medium border-t-2">
-                    <li><SideBarIcon icon={<Package className="w-5 h-5" />} text="Product" /></li>
+                    <li className="text-black"><SideBarIcon icon={<Package className="w-5 h-5" />} text="Product" /></li>
                     <li><SideBarIcon icon={<ShoppingCart className="w-5 h-5" />} text="Sale" /></li>
                     <li><SideBarIcon icon={<LineChart className="w-5 h-5" />} text="Stats" /></li>
                     {/* <li><SideBarIcon icon={<Coins className="w-5 h-5" />} text="Transaction" /></li>
