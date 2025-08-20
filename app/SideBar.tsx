@@ -48,8 +48,8 @@ function SideBar() {
             </svg>
         </button>
 
-        <aside id="sidebar" className="fixed left-0 w-16 h-full transition-transform" aria-label="sidebar">
-            <div className="h-full px-2 bg-white text-white flex flex-col border-r-2">    
+        <aside id="sidebar" className="fixed left-0 w-17 h-full transition-transform" aria-label="sidebar">
+            <div className="h-full px-1 bg-white text-white flex flex-col border-r-2">    
                 {/* logo here */}
                 <ul className="space-y-5 font-medium">
                     <li><SideBarIcon icon={<Home className="w-5 h-5" />} text="Home" /></li>
