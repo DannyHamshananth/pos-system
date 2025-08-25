@@ -2,7 +2,7 @@
 import { usePathname } from "next/navigation";
 import Sidebar from "./SideBar"; // your sidebar component
 
-export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
+export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   //Routes to hide sidebar on `/login`
