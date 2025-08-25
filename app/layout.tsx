@@ -2,6 +2,7 @@ import './globals.css'
 import { Inter } from 'next/font/google'
 import { Toaster } from '@/components/ui/sonner'
 import LayoutWrapper from './LayoutWrapper'
+import { Providers } from './provider';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,8 +19,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-          <LayoutWrapper children={children}/>
-        <Toaster />
+          <div className="flex min-h-screen">
+            <Providers>
+              <LayoutWrapper>
+                {children}
+              </LayoutWrapper>
+            </Providers>
+          </div>
+          <Toaster />
       </body>
     </html>
   )
