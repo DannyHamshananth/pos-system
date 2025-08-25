@@ -1,27 +1,16 @@
 "use client";
-import { useState } from "react";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 
 // Centered Google-only login component
 // - Fully responsive, centered both vertically & horizontally
 // - Minimal UI: one Google button
-// - Drop-in: provide `onGoogleClick` to wire up NextAuth's signIn("google") or your own handler
-// Example (NextAuth):
-// import { signIn } from "next-auth/react";
-// <CenteredGoogleLogin onGoogleClick={() => signIn("google")} />
 
 
-export default function Login({
-    buttonText = "Continue with Google",
-}: {
-    buttonText?: string;
-}) {
-
+export default function Login() {
 
     const handleClick = async () => {
         signIn("google", {callbackUrl: '/'});
     };
-
 
     return (
         <div className="h-screen w-screen flex items-center justify-center p-4 bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-black">
@@ -45,7 +34,7 @@ export default function Login({
                             <path fill="#4CAF50" d="M24 44c5.159 0 9.86-1.977 13.409-5.197l-6.191-5.238C29.211 35.091 26.715 36 24 36c-5.2 0-9.598-3.317-11.264-7.946l-6.53 5.027C9.517 39.556 16.227 44 24 44z"></path>
                             <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.02 12.02 0 01-4.095 5.565l.003-.002 6.191 5.238C36.97 39.251 44 34 44 24c0-1.341-.138-2.651-.389-3.917z"></path>
                         </svg>
-                        <span>{buttonText}</span>
+                        <span>Continue with Google</span>
                     </button>
                 </div>
             </div>
