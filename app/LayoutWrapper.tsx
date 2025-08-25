@@ -13,7 +13,7 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   return (
     <>
       {!shouldHideSidebar && (<Sidebar />)}
-      <div className="flex-1 min-w-[400px] overflow-none md:ml-20">
+      <div className="flex-1 min-w-[400px] overflow-none">
         {children}
       </div>
     </>
