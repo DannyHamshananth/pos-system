@@ -12,22 +12,14 @@ const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
-  session: {
-    strategy: "jwt", // ⚠️ make sure strategy is set
-  },
+  // session: {
+  //   strategy: "database", // ⚠️ default statergy is database
+  // },
   callbacks: {
-    async jwt({ token, user }) {
-      // Persist role in token
-      console.log(user);
-      if (user) {
-        token.role = user.role || "user";
-      }
-      return token;
-    },
-    async session({ session, token }) {
+    async session({ session, user }) {
       // Add role to session
       if (session.user) {
-        session.user.role = token.role;
+        session.user.role = user.role;
       }
       return session;
     },
