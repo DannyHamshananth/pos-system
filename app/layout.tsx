@@ -1,7 +1,8 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
-import SideBar from './SideBar'
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from '@/components/ui/sonner'
+import { LayoutWrapper } from './LayoutWrapper'
+import { Providers } from './provider';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -16,13 +17,14 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className={inter.className}>
+      <body>
         <div className="flex min-h-screen">
-          <SideBar />
-          <div className="flex-1 min-w-[400px] overflow-none">
-            {children}  
-          </div>
+          <Providers>
+            <LayoutWrapper>
+              {children}
+            </LayoutWrapper>
+          </Providers>
         </div>
         <Toaster />
       </body>

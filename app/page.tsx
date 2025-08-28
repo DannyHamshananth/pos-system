@@ -4,13 +4,25 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sale } from "@/lib/sale";
 import { format, set } from "date-fns";
+import { useRouter } from "next/navigation";
+
+import { signIn, useSession } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
+import { data } from "autoprefixer";
 
 export default function StatsPage() {
-  const [sales,setSales] = useState<Sale[]>([]);
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  console.log(session);
+  console.log(status);
+
+  const [sales, setSales] = useState<Sale[]>([]);
 
   useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.replace('/login'); // Redirect to login
+    }
     (async () => {
       const response = await fetch('api/sales/stats', {
         method: 'POST',
@@ -18,7 +30,7 @@ export default function StatsPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          "day_start": format(set(new Date(), { hours: 0, minutes: 0, seconds: 0, milliseconds: 0 }),"yyyy-MM-dd'T'HH:mm:ss.sss'Z'"), 
+          "day_start": format(set(new Date(), { hours: 0, minutes: 0, seconds: 0, milliseconds: 0 }), "yyyy-MM-dd'T'HH:mm:ss.sss'Z'"),
           "time_now": format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.sss'Z'")
         }),
         cache: 'no-store',
@@ -35,7 +47,11 @@ export default function StatsPage() {
       // }));
       setSales(data);
     })();
-  }, []);
+  }, [status, router]);
+
+  if (status === "loading") {
+    return <p className="px-10">Loading...</p>; // prevent flicker
+  }
 
   return (
     <div className="px-10 py-4 sm:ml-10 space-y-6">
@@ -49,7 +65,7 @@ export default function StatsPage() {
             <CardTitle>Net Sale</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{Sale.getTotal(sales,"total")}Rs.</p>
+            <p className="text-3xl font-bold">{Sale.getTotal(sales, "total")}Rs.</p>
           </CardContent>
         </Card>
 
@@ -58,7 +74,7 @@ export default function StatsPage() {
             <CardTitle>Gross Sale</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{Sale.getTotal(sales,"subTotal")}Rs.</p>
+            <p className="text-3xl font-bold">{Sale.getTotal(sales, "subTotal")}Rs.</p>
           </CardContent>
         </Card>
 
@@ -67,7 +83,7 @@ export default function StatsPage() {
             <CardTitle>Offer Deduction</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{Sale.getTotal(sales,"discount")}</p>
+            <p className="text-3xl font-bold">{Sale.getTotal(sales, "discount")}</p>
           </CardContent>
         </Card>
 
@@ -81,7 +97,7 @@ export default function StatsPage() {
         </Card>
       </div>
     </div>
-  );
+  )
 }
 
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from 'next/navigation';
 
 import { Coins, Home, LineChart, Package, Receipt, Settings, ShoppingCart } from "lucide-react";
+import { signIn, useSession } from "next-auth/react";
 
 const icons = {
     // home
@@ -39,7 +40,11 @@ function SideBarIcon({ icon, text }: { icon: React.JSX.Element, text: String }) 
 }
 
 function SideBar() {
-    const [open, setOpen] = useState(true)
+    const [open, setOpen] = useState(true);
+    const { data: session, status } = useSession();
+    console.log(session);
+    console.log(status);
+
     return (
         <React.Fragment>
         <button onClick={()=> {!open}} data-drawer-target="sidebar" data-drawer-toggle="sidebar" aria-controls="sidebar" type="button" className="inline-flex p-2 mt-2 ml-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
@@ -49,22 +54,34 @@ function SideBar() {
         </button>
 
         <aside id="sidebar" className="fixed left-0 w-17 h-full transition-transform" aria-label="sidebar">
-            <div className="h-full px-1 bg-white text-white flex flex-col border-r-2">    
-                {/* logo here */}
-                <ul className="space-y-5 font-medium">
-                    <li><SideBarIcon icon={<Home className="w-5 h-5" />} text="Home" /></li>
-                </ul>
-                <ul className="mt-2 space-y-5 font-medium border-t-2">
-                    <li className="text-black"><SideBarIcon icon={<Package className="w-5 h-5" />} text="Product" /></li>
-                    <li><SideBarIcon icon={<ShoppingCart className="w-5 h-5" />} text="Sale" /></li>
-                    <li><SideBarIcon icon={<LineChart className="w-5 h-5" />} text="Stats" /></li>
-                    {/* <li><SideBarIcon icon={<Coins className="w-5 h-5" />} text="Transaction" /></li>
-                    <li><SideBarIcon icon={<Receipt className="w-5 h-5" />} text="Expense" /></li> */}
-                </ul>
-                <ul className="pt-2 mt-auto font-medium border-t-2">
-                    <li><SideBarIcon icon={<Settings className="w-5 h-5" />} text="Setting" /></li>
-                </ul>
-            </div>
+            {session?.user?.role === 'admin' ? (
+                <div className="h-full px-1 bg-white text-white flex flex-col border-r-2">
+                    {/* logo here */}
+                    <ul className="space-y-5 font-medium">
+                        <li><SideBarIcon icon={<Home className="w-5 h-5" />} text="Home" /></li>
+                    </ul>
+                    <ul className="mt-2 space-y-5 font-medium border-t-2">
+                        <li className="text-black"><SideBarIcon icon={<Package className="w-5 h-5" />} text="Product" /></li>
+                        <li><SideBarIcon icon={<ShoppingCart className="w-5 h-5" />} text="Sale" /></li>
+                        <li><SideBarIcon icon={<LineChart className="w-5 h-5" />} text="Stats" /></li>
+                        {/* <li><SideBarIcon icon={<Coins className="w-5 h-5" />} text="Transaction" /></li>
+                <li><SideBarIcon icon={<Receipt className="w-5 h-5" />} text="Expense" /></li> */}
+                    </ul>
+                    <ul className="pt-2 mt-auto font-medium border-t-2">
+                        <li><SideBarIcon icon={<Settings className="w-5 h-5" />} text="Setting" /></li>
+                    </ul>
+                </div>
+            ) : session?.user?.role === 'user'? (
+                <div className="h-full px-1 bg-white text-white flex flex-col border-r-2">
+                    {/* logo here */}
+                    <ul className="space-y-5 font-medium">
+                        <li><SideBarIcon icon={<Home className="w-5 h-5" />} text="Home" /></li>
+                    </ul>
+                    <ul className="mt-2 space-y-5 font-medium border-t-2">
+                        <li><SideBarIcon icon={<ShoppingCart className="w-5 h-5" />} text="Sale" /></li>
+                    </ul>
+                </div>
+            ): null}
         </aside>
         </React.Fragment>
     );
